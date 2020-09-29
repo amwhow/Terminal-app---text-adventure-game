@@ -11,6 +11,7 @@ class Welcome
   include TextLayout
 
   def initialize
+    @@process = 0
     @story = Story.new
   end
 
@@ -67,5 +68,4 @@ class Welcome
   end
 end
 
-play = Welcome.new
-play.menu
+

@@ -3,12 +3,35 @@
 # story logic and conditions
 require_relative 'text_display'
 require_relative 'battle'
+require_relative 'welcome'
 
-class Story
+class Story < Welcome
   include TextLayout
 
   def initialize
     @battle = Battle.new
+  end
+
+  def dead_end
+    prompt = TTY::Prompt.new
+    death_choice = prompt.select('*** 💀 Game over 💀 ***'.yellow, ['Play again', 'Exit'])
+      if death_choice == 'Play again'
+        play = Welcome.new
+        play.menu
+      elsif death_choice == 'Exit'
+        exit
+      end
+  end
+
+  def process_check
+    @@process += 1
+      case @@process
+      when 1
+        story_two
+      when 2
+        next_line
+        story_three
+      end
   end
 
   def story_one
@@ -33,26 +56,38 @@ class Story
         next_line
         @battle.battle_process('1')
       elsif choice2 == 'Leave it and move on'.blue
-        puts 'story_two'
+        process = Story.new
+        process.process_check
       end
 
     elsif choice1 == 'Rest'.blue
       clear_screen
-      puts '*** Rest'
-      puts 'You took a nap and woke up at night. Suddenly, you found yourself surrounded by a group of hungry wolves, you fought your best but still got outnumbered.'
+      puts '*** Rest'.blue
+      puts 'You took a nap and woke up at night.'
       next_line
-      prompt = TTY::Prompt.new
-      death_choice = prompt.select('*** You died ***', ['Play again', 'Exit'])
-      if death_choice == 'Play again'
-        puts 'run the game again yourself'
-      elsif death_choice == 'Exit'
-        exit
-      end
+      puts 'Suddenly, you found yourself surrounded by a group of hungry wolves.'
+      next_line
+      puts 'You fought your best but still got outnumbered.'
+      next_line
+      dead_end
     end
   end
+
+  def story_two
+    clear_screen
+    puts 'You keep on walking into the jungle, the wind blew like jumping owls.'
+    next_line
+    puts 'Then you saw something in the distance, or rather someone.'
+    next_line
+    puts 'It appears a figure of a man.' 
+    next_line
+    puts '"Hey! Never see a human here, looking for something?", the man said.(to be continued...)' 
+  end
+  
+  def story_three
+    puts "boss storyline"
+  end
+
 end
 
-# need user input to solve a puzzle
-# def story_two
 
-# end

@@ -1,8 +1,5 @@
-# Display a table to show player option and status
-require 'tty-prompt'
-# center the text horizontally and vertically
-module TextLayout  
-  extend self
+# text decoration, introduction and aligning function
+module TextLayout
   def clear_screen
     system('clear')
   end
@@ -12,33 +9,31 @@ module TextLayout
     STDIN.getch
     # puts "                                    \r"
   end
-  
+
   # horizontally center the text
   def center_format(sentence)
-    system("clear")
+    system('clear')
     align_vertically
     puts sentence.center(112)
     sleep(2)
   end
-  
+
   # vertically center the text
   def align_vertically
     14.times do
-    puts ""
+      puts ''
     end
   end
 
   def framed_narration(sentence)
-    puts "=============================================================================================================="
+    puts '=============================================================================================================='
     12.times do
-      puts ""
+      puts ''
     end
     puts sentence.center(112)
     12.times do
-      puts ""
+      puts ''
     end
-    puts "=============================================================================================================="
+    puts '=============================================================================================================='
   end
-
 end
-

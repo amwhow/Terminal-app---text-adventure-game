@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../CLI adventure game ref"
+		},
+		{
+			"path": "../bookmark_terminal_app_ft"
 		}
 	],
 	"settings": {}

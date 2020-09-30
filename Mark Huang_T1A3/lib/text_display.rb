@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # text decoration, introduction and aligning function
 module TextLayout
   def clear_screen
@@ -15,18 +17,18 @@ module TextLayout
   def framed_narration(sentence)
     system('clear')
     rows, columns = $stdout.winsize
-      columns.times do
-        print '='
-      end
-      (rows / 2 - 1).times do
-        puts ''
-      end
+    columns.times do
+      print '='
+    end
+    (rows / 2 - 1).times do
+      puts ''
+    end
     puts sentence.center(columns)
-      (rows / 2 - 1).times do
-        puts ''
-      end
-      columns.times do
-        print '='
-      end
+    (rows / 2 - 1).times do
+      puts ''
+    end
+    columns.times do
+      print '='
+    end
   end
 end

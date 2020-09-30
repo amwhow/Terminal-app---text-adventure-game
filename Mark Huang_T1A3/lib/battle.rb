@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 # take care of battle run and showing status
 require 'colorize'
+require 'io/console'
 require 'tty-prompt'
 require_relative 'text_display'
 require_relative 'story'
@@ -12,8 +15,8 @@ class Battle < Welcome
   extend TextLayout
 
   def initialize
-    @player = {name: 'player_name', atk: 9, hp: 45, escape: 0}
-    @enemy = {'1' => {name: 'Cobra', atk: 5, hp: 20, atk_bonus: 5}, '2' => {name: 'Robber', atk: 8, hp: 35, atk_bonus: 7, item: 'dagger'}, '3' => {name: 'Donkey Kong', atk: 15, hp: 100, item: "Nintendo Switch game: 'Donkey Kong Country: Tropical Freeze'"} }
+    @player = { name: 'player_name', atk: 9, hp: 45, escape: 0 }
+    @enemy = { '1' => { name: 'Cobra', atk: 5, hp: 20, atk_bonus: 5 }, '2' => { name: 'Robber', atk: 8, hp: 35, atk_bonus: 7, item: 'dagger' }, '3' => { name: 'Donkey Kong', atk: 15, hp: 100, item: "Nintendo Switch game: 'Donkey Kong Country: Tropical Freeze'" } }
   end
 
   def battle_routine
@@ -44,32 +47,17 @@ class Battle < Welcome
   # decide whether player hp <= 0
   def player_dead_decide
     if @player[:hp] <= 0
-      puts "You died..."
+      puts 'You died...🤷‍♂️'
       next_line
       dead_story = Story.new
       dead_story.dead_end
     end
   end
 
-  # decide escaped or not
-  def escape_decide
-    # 70% successful rate
-    if @player[:escape] + rand(1..10) > 3
-      framed_narration('You escaped successfully! 💨💨💨')
-      sleep(2)
-      @process += 1
-      process = Story.new
-      process.process_check
-    else
-      framed_narration('You failed to escape! 🙉🙉🙉')
-      sleep(2)
-    end
-  end
-
   # battle outcome prompt
   def battle_result(num)
     clear_screen
-    framed_narration("You win!")
+    framed_narration('You win!')
     sleep(2)
     next_line
     clear_screen
@@ -77,21 +65,19 @@ class Battle < Welcome
     @player[:atk] += @enemy[num.to_s][:atk_bonus]
     next_line
     clear_screen
-      if @enemy[num.to_s][:item]
-        framed_narration("You found -- #{@enemy[num.to_s][:item]}.")
-      end
+    framed_narration("You found -- #{@enemy[num.to_s][:item]}.") if @enemy[num.to_s][:item]
   end
 
   # print different after battle event
   def after_battle_effect
     case @@process
     when 0
-      framed_narration("Having a quick break in the tent, you felt refreshed.(HP restored)")
-      @player[:hp] = 45  
+      framed_narration('Having a quick break in the tent, you felt refreshed.(HP restored)')
+      @player[:hp] = 45
     when 1
-      puts "story 2 after battle result"
+      puts 'story 2 after battle result'
     when 2
-      puts "go to ending"
+      puts 'go to ending'
     end
     # could add error handling here?
   end
@@ -102,18 +88,25 @@ class Battle < Welcome
       battle_routine
       if @choice == 'Attack⚔️'.red
         player_attack(num)
-          # decide whether enemy dead or not
-          if @enemy[num.to_s][:hp] <= 0
-            break
-          end
-      elsif @choice == 'Escape🏃‍♂️'.green 
-        escape_decide
+        # decide whether enemy dead or not
+        break if @enemy[num.to_s][:hp] <= 0
+      elsif @choice == 'Escape🏃‍♂️'.green
+        if @player[:escape] + rand(1..10) > 3
+          framed_narration('You escaped successfully! 💨💨💨')
+          sleep(2)
+          break
+        else
+          framed_narration('You failed to escape! 🙉🙉🙉')
+          sleep(2)
+        end
       end
       enemy_attack(num)
       player_dead_decide
     end
-    battle_result(num)
-    after_battle_effect
+    if @player[:hp] <= 0 || @enemy[num.to_s][:hp] <= 0
+      battle_result(num)
+      after_battle_effect
+    end
     process = Story.new
     process.process_check
   end

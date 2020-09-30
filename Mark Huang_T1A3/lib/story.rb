@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Four battles, including one boss fight
 # six options, 2 irrelevant and 4 critical options
 # story logic and conditions
@@ -7,6 +9,7 @@ require_relative 'text_display'
 require_relative 'battle'
 require_relative 'welcome'
 
+# responsible for navigating game story
 class Story < Welcome
   include TextLayout
 
@@ -17,23 +20,23 @@ class Story < Welcome
   def dead_end
     prompt = TTY::Prompt.new
     death_choice = prompt.select('*** 💀 Game over 💀 ***'.yellow, ['Play again', 'Exit'])
-      if death_choice == 'Play again'
-        play = Welcome.new
-        play.menu
-      elsif death_choice == 'Exit'
-        exit
-      end
+    if death_choice == 'Play again'
+      play = Welcome.new
+      play.menu
+    elsif death_choice == 'Exit'
+      exit
+    end
   end
 
   def process_check
     @@process += 1
-      case @@process
-      when 1
-        story_two
-      when 2
-        next_line
-        story_three
-      end
+    case @@process
+    when 1
+      story_two
+    when 2
+      next_line
+      story_three
+    end
   end
 
   def story_one
@@ -91,7 +94,7 @@ class Story < Welcome
     next_line
     puts 'Then you saw something in the distance, or rather someone.'
     next_line
-    puts 'It appeared a figure of a man.' 
+    puts 'It appeared a figure of a man.'
     next_line
     puts '"Hey! never seen a human here, looking for something?", the man said.'
     next_line
@@ -99,60 +102,55 @@ class Story < Welcome
     next_line
     prompt = TTY::Prompt.new
     choice1 = prompt.select('*** You want to ***', ['Go with him'.red, 'Refuse'.blue])
-      if choice1 == 'Refuse'.blue
-        puts '"Come on, you are gonna love it!", man said.'
-        next_line
-      end
-        puts 'You two sat next to a big campfire.'
-        next_line
-        puts 'While you were having a chat with the guy, you felt some sprinkles falled on you.'
-        next_line
-        puts 'The man turned to you and say "You know what, it is a bit boring just sitting here and wait, how about we play a game?"'
-        next_line
-        puts '"I come from Melbourne, so let\'s try if you can type "I love Melbourne!" in 3 seconds!"'
-        
-        timed_quest
-        next_line
-        puts '"Well done mate, and I think it\'s ready now.", man appeared satisfying.'
-        next_line
-        puts '"What\'s ready?", you asked.'
-        next_line
-        puts '"My meat, it\'s well marinated now..."'
-        next_line
-        puts '"Oh, did I mention I am making human hotpot today?"'
-        next_line
-        puts 'The guy transforms into a fire element and attacked you.'
-        next_line
-        battle_process('2')
-        # to be continued
-  end
-  
-  def timed_quest
-    begin
-      puts '"Press enter if you are ready"'
-      # STDIN will conflict with gets.chomp, making the input unwanted result.
+    if choice1 == 'Refuse'.blue
+      puts '"Come on, you are gonna love it!", man said.'
       next_line
-      Timeout::timeout(3) {
-        @text = gets.chomp
-        aaa = 1
-      }
-    rescue Timeout::Error
-      puts "That's too slow mate! Try again."
-      retry
-    else
-      if @text != "I love Melbourne!"
-        puts "Nuh-uh, found typo there, try again."
-        next_line
-        timed_quest
-      end
-      puts "Wow you did it! You must love Melbourne as well."
     end
+    puts 'You two sat next to a big campfire.'
+    next_line
+    puts 'While you were having a chat with the guy, you felt some sprinkles falled on you.'
+    next_line
+    puts 'The man turned to you and say "You know what, it is a bit boring just sitting here and wait, how about we play a game?"'
+    next_line
+    puts '"I come from Melbourne, so let\'s try if you can type "I love Melbourne!" in 3 seconds!"'
+
+    timed_quest
+    next_line
+    puts '"Well done mate, and I think it\'s ready now.", man appeared satisfying.'
+    next_line
+    puts '"What\'s ready?", you asked.'
+    next_line
+    puts '"My meat, it\'s well marinated now..."'
+    next_line
+    puts '"Oh, did I mention I am making human hotpot today?"'
+    next_line
+    puts 'The guy transforms into a fire element and attacked you.'
+    next_line
+    battle_process('2')
+    # to be continued
+  end
+
+  def timed_quest
+    puts '"Press enter if you are ready"'
+    # STDIN will conflict with gets.chomp, making the input unwanted result.
+    next_line
+    Timeout.timeout(3) do
+      @text = gets.chomp
+      @text = @text
+    end
+  rescue Timeout::Error
+    puts "That's too slow mate! Try again."
+    retry
+  else
+    if @text != 'I love Melbourne!'
+      puts 'Nuh-uh, found typo there, try again.'
+      next_line
+      timed_quest
+    end
+    puts 'Wow you did it! You must love Melbourne as well.'
   end
 
   def story_three
-    puts "boss storyline"
+    puts 'boss storyline'
   end
-
 end
-
-

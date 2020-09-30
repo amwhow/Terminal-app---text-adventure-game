@@ -5,35 +5,28 @@ module TextLayout
   end
 
   # Code credit: https://stackoverflow.com/questions/34594018/how-to-code-press-key-to-continue/34594382
+  # STDIN stands for standard input, requires io/console
+  # getch reads and returns a character in raw mode without pressing enter
   def next_line
     STDIN.getch
-    # puts "                                    \r"
-  end
-
-  # horizontally center the text
-  def center_format(sentence)
-    system('clear')
-    align_vertically
-    puts sentence.center(112)
-    sleep(2)
-  end
-
-  # vertically center the text
-  def align_vertically
-    14.times do
-      puts ''
-    end
+    # puts "                         \r"
   end
 
   def framed_narration(sentence)
-    puts '=============================================================================================================='
-    12.times do
-      puts ''
-    end
-    puts sentence.center(112)
-    12.times do
-      puts ''
-    end
-    puts '=============================================================================================================='
+    system('clear')
+    rows, columns = $stdout.winsize
+      columns.times do
+        print '='
+      end
+      (rows / 2 - 1).times do
+        puts ''
+      end
+    puts sentence.center(columns)
+      (rows / 2 - 1).times do
+        puts ''
+      end
+      columns.times do
+        print '='
+      end
   end
 end

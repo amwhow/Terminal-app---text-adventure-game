@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-# Four battles, including one boss fight
-# six options, 2 irrelevant and 4 critical options
-# story logic and conditions
-require 'io/console'
 require 'timeout'
+require 'date'
+require "yaml"
 require_relative 'text_display'
 require_relative 'battle'
 require_relative 'welcome'
@@ -15,6 +13,78 @@ class Story < Welcome
 
   def initialize
     @battle = Battle.new
+  end
+
+  #saving function
+  def process_check
+    @@process += 1
+    case @@process
+    when 1
+      story_two
+    when 2
+      story_three
+    end
+  end
+
+  def save_or_not
+    prompt = TTY::Prompt.new
+    save_choice = prompt.select('*** Do you want to save the game now? ***'.yellow, ['yep'.red, 'nope'.blue])
+      if save_choice == 'yep'.red
+        save(@@play.player_name)
+      elsif save_choice == 'nope'.blue
+        puts "that's fine, enjoy your journey."
+        next_line
+      end
+  end
+
+  def save(name)
+    time = Time.now.strftime("%k%M_%d%m%Y") 
+    @filename = "#{name}_#{time.to_s}.yml"
+    savefile = File.open("../Mark Huang_T1A3/savedata/#{@filename}", "w") { |file| file.write(@@process.to_yaml) }
+    puts "*** Game saved ***".yellow
+    #record playername, time, and process(chapter) number
+    #write it into a yaml file? 
+    #can only save after each battle(story)
+  end
+
+  def list_of_saves
+    @savelist = []
+      Dir.foreach('../Mark Huang_T1A3/savedata/') do |item|
+        @savelist << item
+      end
+    @savelist.select! {|item| item =~ /.yml\b/}
+    @savehash = {}
+    i = 0
+      @savelist.each do |x|
+        i += 1
+        @savehash[i] = x.to_s
+        puts "#{i}. #{@savehash[i]}"
+      end
+      @list_length = i
+  end
+
+  def load 
+    puts "===== List of Save Data =====".yellow
+    list_of_saves
+    puts "*** Choose a file by typing in its number ***".yellow
+    while true
+      save_index = gets.chomp.to_i
+      if (save_index.is_a? Numeric) && save_index <= @list_length && save_index > 0
+        load_file(@savehash[save_index])
+        break
+      else
+        puts "That's not a vaild number, please type in again.".yellow
+      sleep(0.5)
+      end
+    end
+    
+  end
+
+  def load_file(filename)
+    loadsave = File.open("../Mark Huang_T1A3/savedata/#{filename}", 'r') { |file| YAML::load(file) }
+    @@process = loadsave
+    puts "===== Save file successfully loaded =====".yellow
+    process_check
   end
 
   def dead_end
@@ -28,20 +98,10 @@ class Story < Welcome
     end
   end
 
-  def process_check
-    @@process += 1
-    case @@process
-    when 1
-      story_two
-    when 2
-      next_line
-      story_three
-    end
-  end
-
   def story_one
     puts 'You went to parachuting and was blown into a huge jungle by a tornado that came from nowhere. Luckily, you had a soft landing and you were not hurt!'
     next_line
+    # input 3
     prompt = TTY::Prompt.new
     choice1 = prompt.select('*** Now you want to ***', ['Explore the jungle'.red, 'Rest'.blue])
     if choice1 == 'Explore the jungle'.red
@@ -62,6 +122,7 @@ class Story < Welcome
   end
 
   def story_one_branch_one_b1
+    # input 4
     prompt = TTY::Prompt.new
     choice2 = prompt.select('*** You want to ***', ['Go check the tent'.red, 'Leave it and move on'.blue])
     if choice2 == 'Go check the tent'.red
@@ -72,6 +133,7 @@ class Story < Welcome
       @battle.battle_process('1')
     elsif choice2 == 'Leave it and move on'.blue
       process = Story.new
+      process.save_or_not
       process.process_check
     end
   end
@@ -100,20 +162,20 @@ class Story < Welcome
     next_line
     puts '"You know what, I just set my fire up, up for some hotpot and tell me your story?"'
     next_line
+    # input 5
     prompt = TTY::Prompt.new
     choice1 = prompt.select('*** You want to ***', ['Go with him'.red, 'Refuse'.blue])
-    if choice1 == 'Refuse'.blue
-      puts '"Come on, you are gonna love it!", man said.'
-      next_line
-    end
+      if choice1 == 'Refuse'.blue
+        puts '"Come on, you are gonna love it!", man said.'
+        next_line
+      end
     puts 'You two sat next to a big campfire.'
     next_line
     puts 'While you were having a chat with the guy, you felt some sprinkles falled on you.'
     next_line
     puts 'The man turned to you and say "You know what, it is a bit boring just sitting here and wait, how about we play a game?"'
     next_line
-    puts '"I come from Melbourne, so let\'s try if you can type "I love Melbourne!" in 3 seconds!"'
-
+    puts '"I come from Melbourne, so let\'s try if you can type "I love Melbourne!" in 3 seconds!"'.yellow
     timed_quest
     next_line
     puts '"Well done mate, and I think it\'s ready now.", man appeared satisfying.'
@@ -124,21 +186,21 @@ class Story < Welcome
     next_line
     puts '"Oh, did I mention I am making human hotpot today?"'
     next_line
-    puts 'The guy transforms into a fire element and attacked you.'
+    puts 'The guy transforms into a fire element🔥 and attacked you!'
     next_line
-    battle_process('2')
+    @battle.battle_process('2')
     # to be continued
   end
 
   def timed_quest
     puts '"Press enter if you are ready"'
-    # STDIN will conflict with gets.chomp, making the input unwanted result.
     next_line
     Timeout.timeout(3) do
       @text = gets.chomp
       @text = @text
     end
   rescue Timeout::Error
+    puts ""
     puts "That's too slow mate! Try again."
     retry
   else
@@ -147,7 +209,7 @@ class Story < Welcome
       next_line
       timed_quest
     end
-    puts 'Wow you did it! You must love Melbourne as well.'
+    puts 'Wow you did it! You must love Melbourne just like me.'
   end
 
   def story_three

@@ -6,5 +6,5 @@ require_relative 'welcome.rb'
 require_relative 'text_display.rb'
 require_relative 'battle.rb'
 
-play = Welcome.new
-play.menu
+@@play = Welcome.new
+@@play.menu

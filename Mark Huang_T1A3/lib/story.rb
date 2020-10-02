@@ -2,7 +2,7 @@
 
 require 'timeout'
 require 'date'
-require "yaml"
+require 'yaml'
 require_relative 'text_display'
 require_relative 'battle'
 require_relative 'welcome'
@@ -15,7 +15,7 @@ class Story < Welcome
     @battle = Battle.new
   end
 
-  #saving function
+  # saving function
   def process_check
     @@process += 1
     case @@process
@@ -29,61 +29,60 @@ class Story < Welcome
   def save_or_not
     prompt = TTY::Prompt.new
     save_choice = prompt.select('*** Do you want to save the game now? ***'.yellow, ['yep'.red, 'nope'.blue])
-      if save_choice == 'yep'.red
-        save(@@play.player_name)
-      elsif save_choice == 'nope'.blue
-        puts "that's fine, enjoy your journey."
-        next_line
-      end
+    if save_choice == 'yep'.red
+      save(@@play.player_name)
+    elsif save_choice == 'nope'.blue
+      puts "that's fine, enjoy your journey."
+      next_line
+    end
   end
 
   def save(name)
-    time = Time.now.strftime("%k%M_%d%m%Y") 
-    @filename = "#{name}_#{time.to_s}.yml"
-    savefile = File.open("../Mark Huang_T1A3/savedata/#{@filename}", "w") { |file| file.write(@@process.to_yaml) }
-    puts "*** Game saved ***".yellow
-    #record playername, time, and process(chapter) number
-    #write it into a yaml file? 
-    #can only save after each battle(story)
+    time = Time.now.strftime('%k%M_%d%m%Y')
+    @filename = "#{name}_#{time}.yml"
+    savefile = File.open("../Mark Huang_T1A3/savedata/#{@filename}", 'w') { |file| file.write(@@process.to_yaml) }
+    puts '*** Game saved ***'.yellow
+    # record playername, time, and process(chapter) number
+    # write it into a yaml file?
+    # can only save after each battle(story)
   end
 
   def list_of_saves
     @savelist = []
-      Dir.foreach('../Mark Huang_T1A3/savedata/') do |item|
-        @savelist << item
-      end
-    @savelist.select! {|item| item =~ /.yml\b/}
+    Dir.foreach('../Mark Huang_T1A3/savedata/') do |item|
+      @savelist << item
+    end
+    @savelist.select! { |item| item =~ /.yml\b/ }
     @savehash = {}
     i = 0
-      @savelist.each do |x|
-        i += 1
-        @savehash[i] = x.to_s
-        puts "#{i}. #{@savehash[i]}"
-      end
-      @list_length = i
+    @savelist.each do |x|
+      i += 1
+      @savehash[i] = x.to_s
+      puts "#{i}. #{@savehash[i]}"
+    end
+    @list_length = i
   end
 
-  def load 
-    puts "===== List of Save Data =====".yellow
+  def load
+    puts '===== List of Save Data ====='.yellow
     list_of_saves
-    puts "*** Choose a file by typing in its number ***".yellow
-    while true
+    puts '*** Choose a file by typing in its number ***'.yellow
+    loop do
       save_index = gets.chomp.to_i
-      if (save_index.is_a? Numeric) && save_index <= @list_length && save_index > 0
+      if (save_index.is_a? Numeric) && save_index <= @list_length && save_index.positive?
         load_file(@savehash[save_index])
         break
       else
         puts "That's not a vaild number, please type in again.".yellow
-      sleep(0.5)
+        sleep(0.5)
       end
     end
-    
   end
 
   def load_file(filename)
-    loadsave = File.open("../Mark Huang_T1A3/savedata/#{filename}", 'r') { |file| YAML::load(file) }
+    loadsave = File.open("../Mark Huang_T1A3/savedata/#{filename}", 'r') { |file| YAML.safe_load(file) }
     @@process = loadsave
-    puts "===== Save file successfully loaded =====".yellow
+    puts '===== Save file successfully loaded ====='.yellow
     process_check
   end
 
@@ -165,10 +164,10 @@ class Story < Welcome
     # input 5
     prompt = TTY::Prompt.new
     choice1 = prompt.select('*** You want to ***', ['Go with him'.red, 'Refuse'.blue])
-      if choice1 == 'Refuse'.blue
-        puts '"Come on, you are gonna love it!", man said.'
-        next_line
-      end
+    if choice1 == 'Refuse'.blue
+      puts '"Come on, you are gonna love it!", man said.'
+      next_line
+    end
     puts 'You two sat next to a big campfire.'
     next_line
     puts 'While you were having a chat with the guy, you felt some sprinkles falled on you.'
@@ -200,7 +199,7 @@ class Story < Welcome
       @text = @text
     end
   rescue Timeout::Error
-    puts ""
+    puts ''
     puts "That's too slow mate! Try again."
     retry
   else

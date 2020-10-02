@@ -10,7 +10,8 @@ module TextLayout
   # STDIN stands for standard input, requires io/console
   # getch reads and returns a character in raw mode without pressing enter
   def next_line
-    STDIN.getch
+    prompt = TTY::Prompt.new
+    prompt.keypress
     # puts "                         \r"
   end
 

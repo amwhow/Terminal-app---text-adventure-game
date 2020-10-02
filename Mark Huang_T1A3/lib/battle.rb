@@ -16,7 +16,7 @@ class Battle < Welcome
 
   def initialize
     @player = { name: 'player_name', atk: 9, hp: 45, escape: 0 }
-    @enemy = { '1' => { name: 'Cobra', atk: 5, hp: 20, atk_bonus: 5 }, '2' => { name: 'Robber', atk: 8, hp: 35, atk_bonus: 7, item: 'dagger' }, '3' => { name: 'Donkey Kong', atk: 15, hp: 100, item: "Nintendo Switch game: 'Donkey Kong Country: Tropical Freeze'" } }
+    @enemy = { '1' => { name: 'Cobra', atk: 5, hp: 20, atk_bonus: 5 }, '2' => { name: 'Fire Element', atk: 8, hp: 40, atk_bonus: 7, item: 'Fire essence' }, '3' => { name: 'Donkey Kong', atk: 15, hp: 100, item: "Nintendo Switch game: 'Donkey Kong Country: Tropical Freeze'" } }
   end
 
   def battle_routine
@@ -72,7 +72,7 @@ class Battle < Welcome
   def after_battle_effect
     case @@process
     when 0
-      framed_narration('Having a quick break in the tent, you felt refreshed.(HP restored)')
+      framed_narration('After having a quick break in the tent, you felt refreshed.(HP restored)')
       @player[:hp] = 45
     when 1
       puts 'story 2 after battle result'
@@ -108,6 +108,7 @@ class Battle < Welcome
       after_battle_effect
     end
     process = Story.new
+    process.save_or_not
     process.process_check
   end
 end

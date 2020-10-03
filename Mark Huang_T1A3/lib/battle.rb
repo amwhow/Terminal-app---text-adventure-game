@@ -7,16 +7,19 @@ require 'tty-prompt'
 require_relative 'text_display'
 require_relative 'story'
 require_relative 'welcome'
+require 'artii'
 
 # define how a battle will go
 class Battle < Welcome
-  attr_accessor :player, :enemy
+  attr_accessor :player, :enemy, :process
   include TextLayout
   extend TextLayout
 
   def initialize
-    @player = { name: 'player_name', atk: 9, hp: 45, escape: 0 }
-    @enemy = { '1' => { name: 'Cobra', atk: 5, hp: 20, atk_bonus: 5 }, '2' => { name: 'Fire Element', atk: 8, hp: 40, atk_bonus: 7, item: 'Fire essence' }, '3' => { name: 'Donkey Kong', atk: 15, hp: 100, item: "Nintendo Switch game: 'Donkey Kong Country: Tropical Freeze'" } }
+    $game_process = 0
+    # $battle_statistics
+    @player = { name: @@play.player_name.to_s, atk: 10, hp: 45, escape: 0 }
+    @enemy = { '1' => { name: 'Cobra', atk: 5, hp: 20, atk_bonus: 5 }, '2' => { name: 'Fire Element', atk: 8, hp: 40, atk_bonus: 7, item: 'Fire essence' }, '3' => { name: 'Donkey Kong', atk: 10, hp: 100, item: "'Donkey Kong Country: Tropical Freeze'" } }
   end
 
   def battle_routine
@@ -61,25 +64,34 @@ class Battle < Welcome
     sleep(2)
     next_line
     clear_screen
-    framed_narration("After beating the #{@enemy[num.to_s][:name]}, you felt you are stronger now.(atk + #{@enemy[num.to_s][:atk_bonus]})")
-    @player[:atk] += @enemy[num.to_s][:atk_bonus]
-    next_line
-    clear_screen
-    framed_narration("You found -- #{@enemy[num.to_s][:item]}.") if @enemy[num.to_s][:item]
+    if $game_process < 2
+      framed_narration("After beating the #{@enemy[num.to_s][:name]}, you felt you are stronger now.(atk + #{@enemy[num.to_s][:atk_bonus]})")
+      @player[:atk] += @enemy[num.to_s][:atk_bonus]
+      next_line
+      clear_screen
+      # framed_narration("You found -- #{@enemy[num.to_s][:item]}.") if @enemy[num.to_s][:item]
+    end
   end
 
   # print different after battle event
   def after_battle_effect
-    case @@process
+    case $game_process
     when 0
       framed_narration('After having a quick break in the tent, you felt refreshed.(HP restored)')
       @player[:hp] = 45
     when 1
-      puts 'story 2 after battle result'
+      framed_narration('You had a BBQ around the campfire and felt energised to move on. (HP restored)')
+      @player[:hp] = 45
     when 2
-      puts 'go to ending'
+      framed_narration('Donkey Kong fainted, and the illusion of the Jungle was expelled.')
+      next_line
+      framed_narration('Congrats! you have completed the game!')
+      next_line
+      framed_narration('Thanks for playing! See you in the future!')
+      next_line
+      framed_narration('-- Mark Huang')
+      exit
     end
-    # could add error handling here?
   end
 
   # main battle process
@@ -105,10 +117,12 @@ class Battle < Welcome
     end
     if @player[:hp] <= 0 || @enemy[num.to_s][:hp] <= 0
       battle_result(num)
+      $game_process = num.to_i - 1
       after_battle_effect
     end
-    process = Story.new
-    process.save_or_not
-    process.process_check
+    battle = Story.new
+    next_line
+    battle.save_or_not
+    battle.process_check
   end
 end

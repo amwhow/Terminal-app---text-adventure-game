@@ -10,19 +10,16 @@ require_relative 'text_display'
 # Welcome menu function
 class Welcome
   include TextLayout
-  attr_accessor :player_name
+  attr_accessor :player_name, :story
 
   def initialize
-    @@process = 0
-    @story = Story.new
-    @player_name = ''
+    @player_name
   end
 
   def menu
     clear_screen
     system("artii 'J U N G L E   R U N'")
     prompt = TTY::Prompt.new
-    # input 1
     user_welcome_choice = prompt.select('*** 🌴 Welcome to Jungle Run 🌴 ***', %w[Newgame Load Exit])
     # sleep(0.5)
     # system("afplay ./lib/Kalimdor.mp3")
@@ -50,17 +47,19 @@ class Welcome
     next_line
     puts 'May I know your name?'
     print '>'
-    # newgame input 2
+    # newgame
     @player_name = gets.chomp
     clear_screen
     puts "Greetings, #{@player_name}. Your Jungle journey starts now..."
     next_line
     clear_screen
+    @story = Story.new
     @story.story_one
   end
 
   # Load button
   def load_page
+    @story = Story.new
     @story.load
   end
 end

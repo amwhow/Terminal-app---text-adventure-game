@@ -10,19 +10,23 @@ require_relative 'welcome'
 # responsible for navigating game story
 class Story < Welcome
   include TextLayout
+  attr_accessor :battle
 
   def initialize
-    @battle = Battle.new
+    # @battle = Battle.new
   end
 
   # saving function
   def process_check
-    @@process += 1
-    case @@process
+    $game_process += 1
+    case $game_process
     when 1
       story_two
     when 2
+      $battle_statistics.player[:escape] = -10
       story_three
+    when 3
+      puts 'Congrats! you have completed the game!'
     end
   end
 
@@ -31,8 +35,9 @@ class Story < Welcome
     save_choice = prompt.select('*** Do you want to save the game now? ***'.yellow, ['yep'.red, 'nope'.blue])
     if save_choice == 'yep'.red
       save(@@play.player_name)
+      next_line
     elsif save_choice == 'nope'.blue
-      puts "that's fine, enjoy your journey."
+      puts "that's fine, enjoy your journey.".yellow
       next_line
     end
   end
@@ -40,11 +45,11 @@ class Story < Welcome
   def save(name)
     time = Time.now.strftime('%k%M_%d%m%Y')
     @filename = "#{name}_#{time}.yml"
-    savefile = File.open("../Mark Huang_T1A3/savedata/#{@filename}", 'w') { |file| file.write(@@process.to_yaml) }
+    File.open("../Mark Huang_T1A3/savedata/#{@filename}", 'w') do |file|
+      file.write($battle_statistics.to_yaml)
+      file.write($game_process.to_yaml)
+    end
     puts '*** Game saved ***'.yellow
-    # record playername, time, and process(chapter) number
-    # write it into a yaml file?
-    # can only save after each battle(story)
   end
 
   def list_of_saves
@@ -80,9 +85,12 @@ class Story < Welcome
   end
 
   def load_file(filename)
-    loadsave = File.open("../Mark Huang_T1A3/savedata/#{filename}", 'r') { |file| YAML.safe_load(file) }
-    @@process = loadsave
+    file_array = []
+    loadsave = YAML.load_stream(File.read("../Mark Huang_T1A3/savedata/#{filename}")) { |file| file_array << file }
+    $battle_statistics = file_array[0]
+    $game_process = file_array[-1]
     puts '===== Save file successfully loaded ====='.yellow
+    next_line
     process_check
   end
 
@@ -100,7 +108,6 @@ class Story < Welcome
   def story_one
     puts 'You went to parachuting and was blown into a huge jungle by a tornado that came from nowhere. Luckily, you had a soft landing and you were not hurt!'
     next_line
-    # input 3
     prompt = TTY::Prompt.new
     choice1 = prompt.select('*** Now you want to ***', ['Explore the jungle'.red, 'Rest'.blue])
     if choice1 == 'Explore the jungle'.red
@@ -120,8 +127,15 @@ class Story < Welcome
     next_line
   end
 
+  def self.create_battle
+    $battle_statistics = Battle.new
+  end
+
+  # def create_story
+  #   @story = Story.new
+  # end
+
   def story_one_branch_one_b1
-    # input 4
     prompt = TTY::Prompt.new
     choice2 = prompt.select('*** You want to ***', ['Go check the tent'.red, 'Leave it and move on'.blue])
     if choice2 == 'Go check the tent'.red
@@ -129,11 +143,14 @@ class Story < Welcome
       puts '*** Go check the tent'.red
       puts 'The moment you step into the tent, a cobra comes at you!'
       next_line
-      @battle.battle_process('1')
+      # first time Battle.new called
+      Story.create_battle.battle_process('1')
     elsif choice2 == 'Leave it and move on'.blue
-      process = Story.new
-      process.save_or_not
-      process.process_check
+      # not working
+      Story.create_battle
+      story = Story.new
+      story.save_or_not
+      story.process_check
     end
   end
 
@@ -161,7 +178,6 @@ class Story < Welcome
     next_line
     puts '"You know what, I just set my fire up, up for some hotpot and tell me your story?"'
     next_line
-    # input 5
     prompt = TTY::Prompt.new
     choice1 = prompt.select('*** You want to ***', ['Go with him'.red, 'Refuse'.blue])
     if choice1 == 'Refuse'.blue
@@ -176,6 +192,11 @@ class Story < Welcome
     next_line
     puts '"I come from Melbourne, so let\'s try if you can type "I love Melbourne!" in 3 seconds!"'.yellow
     timed_quest
+    rows, columns = $stdout.winsize
+    columns.times do
+      print '='
+    end
+    puts 'Wow you did it! You must love Melbourne just like me.'.yellow
     next_line
     puts '"Well done mate, and I think it\'s ready now.", man appeared satisfying.'
     next_line
@@ -187,14 +208,13 @@ class Story < Welcome
     next_line
     puts 'The guy transforms into a fire element🔥 and attacked you!'
     next_line
-    @battle.battle_process('2')
-    # to be continued
+    $battle_statistics.battle_process('2')
   end
 
   def timed_quest
     puts '"Press enter if you are ready"'
     next_line
-    Timeout.timeout(3) do
+    Timeout.timeout(6) do
       @text = gets.chomp
       @text = @text
     end
@@ -208,10 +228,32 @@ class Story < Welcome
       next_line
       timed_quest
     end
-    puts 'Wow you did it! You must love Melbourne just like me.'
   end
 
   def story_three
-    puts 'boss storyline'
+    puts 'You were back on track, going to the deep of the jungle.'
+    next_line
+    puts 'Suddenly, you felt the jungle was shaking.'
+    next_line
+    puts '.'
+    next_line
+    puts '..'
+    next_line
+    puts '...'
+    next_line
+    puts 'Bang! Something huge smashed on the land behind you.'
+    next_line
+    puts 'and it\'s DONKEY KONG!!!'
+    next_line
+    if $battle_statistics.player[:atk] < 20
+      puts '--"You are not PREPARED!!"--🦍🦍🦍'
+      next_line
+    else
+      puts '"Is that you who killed all of my lackeys?!"'
+      next_line
+      puts '"That\'s ridiculous, but this is your end💢"'
+      next_line
+    end
+    $battle_statistics.battle_process('3')
   end
 end

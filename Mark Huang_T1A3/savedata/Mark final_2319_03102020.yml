@@ -1,0 +1,25 @@
+--- !ruby/object:Battle
+player:
+  :name: Mark final
+  :atk: 10
+  :hp: 45
+  :escape: 0
+enemy:
+  '1':
+    :name: Cobra
+    :atk: 5
+    :hp: 20
+    :atk_bonus: 5
+  '2':
+    :name: Fire Element
+    :atk: 8
+    :hp: 40
+    :atk_bonus: 7
+    :item: Fire essence
+  '3':
+    :name: Donkey Kong
+    :atk: 10
+    :hp: 100
+    :item: "'Donkey Kong Country: Tropical Freeze'"
+choice: "\e[0;32;49mEscape\U0001F3C3‍♂️\e[0m"
+--- 1

@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby 
+
+# gems
+require 'tty-prompt'
+require 'io/console'
+require 'colorize'
+require 'artii'
+require 'timeout'
+require 'date'
+require 'yaml'
+
+# files
+require_relative '../Mark Huang_T1A3/lib/trial'

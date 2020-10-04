@@ -4,10 +4,11 @@
 require 'colorize'
 require 'io/console'
 require 'tty-prompt'
+require 'artii'
 require_relative 'text_display'
 require_relative 'story'
 require_relative 'welcome'
-require 'artii'
+
 
 # define how a battle will go
 class Battle < Welcome

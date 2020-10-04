@@ -20,9 +20,7 @@ class Welcome
     clear_screen
     system("artii 'J U N G L E   R U N'")
     prompt = TTY::Prompt.new
-    user_welcome_choice = prompt.select('*** 🌴 Welcome to Jungle Run 🌴 ***', %w[Newgame Load Exit])
-    # sleep(0.5)
-    # system("afplay ./lib/Kalimdor.mp3")
+    user_welcome_choice = prompt.select("*** 🌴 Welcome to Jungle Run 🌴 ***", %w[Newgame Load Help Exit])
     case user_welcome_choice
     when 'Newgame'
       clear_screen
@@ -30,6 +28,11 @@ class Welcome
     when 'Load'
       clear_screen
       load_page
+    when 'Help'
+      clear_screen
+      help_docs
+      next_line
+      @@play.menu
     when 'Exit'
       clear_screen
       puts 'The jungle is always here for you, so long.'
@@ -61,5 +64,12 @@ class Welcome
   def load_page
     @story = Story.new
     @story.load
+  end
+
+  # Help button
+  def help_docs 
+    puts "Hitting any key to continue the story."
+    puts "Making choices from the prompt menu."
+    puts "Follow the in-game instruction and enjoy your journey!"
   end
 end

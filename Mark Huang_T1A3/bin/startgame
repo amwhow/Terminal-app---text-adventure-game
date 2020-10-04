@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby 
+#!/usr/bin/env ruby
 
 # gems
 require 'tty-prompt'
@@ -10,4 +10,4 @@ require 'date'
 require 'yaml'
 
 # files
-require_relative '../Mark Huang_T1A3/lib/trial'
+require_relative '../lib/run.rb'

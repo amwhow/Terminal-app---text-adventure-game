@@ -1,1 +1,0 @@
-puts 'shell script is working'

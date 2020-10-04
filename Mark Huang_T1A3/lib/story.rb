@@ -25,8 +25,6 @@ class Story < Welcome
     when 2
       $battle_statistics.player[:escape] = -10
       story_three
-    when 3
-      puts 'Congrats! you have completed the game!'
     end
   end
 
@@ -39,6 +37,7 @@ class Story < Welcome
     elsif save_choice == 'nope'.blue
       puts "that's fine, enjoy your journey.".yellow
       next_line
+      clear_screen
     end
   end
 
@@ -131,10 +130,6 @@ class Story < Welcome
     $battle_statistics = Battle.new
   end
 
-  # def create_story
-  #   @story = Story.new
-  # end
-
   def story_one_branch_one_b1
     prompt = TTY::Prompt.new
     choice2 = prompt.select('*** You want to ***', ['Go check the tent'.red, 'Leave it and move on'.blue])
@@ -183,7 +178,9 @@ class Story < Welcome
     if choice1 == 'Refuse'.blue
       puts '"Come on, you are gonna love it!", man said.'
       next_line
+      clear_screen
     end
+    clear_screen
     puts 'You two sat next to a big campfire.'
     next_line
     puts 'While you were having a chat with the guy, you felt some sprinkles falled on you.'
@@ -196,8 +193,8 @@ class Story < Welcome
     columns.times do
       print '='
     end
-    puts 'Wow you did it! You must love Melbourne just like me.'.yellow
     next_line
+    clear_screen
     puts '"Well done mate, and I think it\'s ready now.", man appeared satisfying.'
     next_line
     puts '"What\'s ready?", you asked.'
@@ -220,13 +217,18 @@ class Story < Welcome
     end
   rescue Timeout::Error
     puts ''
-    puts "That's too slow mate! Try again."
+    @answer = "That's too slow mate! Try again."
+    puts @answer
     retry
   else
     if @text != 'I love Melbourne!'
-      puts 'Nuh-uh, found typo there, try again.'
+      @answer = 'Nuh-uh, found typo there, try again.'
+      puts @answer
       next_line
       timed_quest
+    else @text == 'I love Melbourne!'
+         @answer = 'Wow you did it! You must love Melbourne just like me.'.yellow
+         puts @answer
     end
   end
 

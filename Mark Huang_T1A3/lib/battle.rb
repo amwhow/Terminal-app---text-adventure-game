@@ -9,7 +9,6 @@ require_relative 'text_display'
 require_relative 'story'
 require_relative 'welcome'
 
-
 # define how a battle will go
 class Battle < Welcome
   attr_accessor :player, :enemy, :process
@@ -18,7 +17,6 @@ class Battle < Welcome
 
   def initialize
     $game_process = 0
-    # $battle_statistics
     @player = { name: @@play.player_name.to_s, atk: 10, hp: 45, escape: 0 }
     @enemy = { '1' => { name: 'Cobra', atk: 5, hp: 20, atk_bonus: 5 }, '2' => { name: 'Fire Element', atk: 8, hp: 40, atk_bonus: 7, item: 'Fire essence' }, '3' => { name: 'Donkey Kong', atk: 10, hp: 100, item: "'Donkey Kong Country: Tropical Freeze'" } }
   end
@@ -51,7 +49,7 @@ class Battle < Welcome
   # decide whether player hp <= 0
   def player_dead_decide
     if @player[:hp] <= 0
-      puts 'You died...🤷‍♂️'
+      framed_narration('You died...🤷‍♂️')
       next_line
       dead_story = Story.new
       dead_story.dead_end

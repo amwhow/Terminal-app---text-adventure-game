@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-# gem 
+# gem
 gem 'artii'
 gem 'colorize'
 gem 'io-console'

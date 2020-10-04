@@ -158,6 +158,8 @@ class Story < Welcome
     next_line
     puts 'You fought your best but still got outnumbered.'
     next_line
+    framed_narration("You died...🍖")
+    next_line
     dead_end
   end
 

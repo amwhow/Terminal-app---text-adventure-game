@@ -1,8 +1,5 @@
 # Text Adventure game Terminal App
 
-## Github
-https://github.com/amwhow/Terminal-app---text-adventure-game.git
-
 ## Installation and Setup
 1. Install Ruby, see instructions [here](https://www.ruby-lang.org/en/documentation/installation/)  
    
@@ -26,7 +23,7 @@ git clone https://github.com/amwhow/Terminal-app---text-adventure-game.git
 3. **Target audience**  
    Anyone who like to play games, beginner developers wants to explore more possibilities of Ruby, or anyone just want to kill some time.
 
-4. **How a member of target audience will use it**  
+4. **How to use**  
    Players can follow easy in-game instructions which will navigate them across the game. There are also some easy to read help commands that will assist players to understand the game better. 
     
 
@@ -46,16 +43,6 @@ git clone https://github.com/amwhow/Terminal-app---text-adventure-game.git
 - The player can save game data at specific point of game, typically after each battle and important choice. This will create a .yml file in the save data folder with player's name and save time.  
 - If there's existing saving files, players can load any one of them at the beginning of the game. After loading, the story will jump to the certain save point and the player stats will be updated accordingly as well.
 
-## Outline of User Interaction
-
-1. **How the user will find out how to interact with each feature**  
-A simple in-game help document will assist users to quickly understand how the game will work.
-
-2. **How the user will interact with / use each feature**  
-The game is pretty straight-forward, and there are instructions for each choice or input in the game. Most of the input via the user will be selection which limits error occurrence.  
-
-3. **How errors will be handled by the application and displayed to the user**  
-Errors are limited as user input will mostly come from selection, wherever text input might bring errors are covered with error handling by rescue. Such as in the mini-typing game, the player might fail to type in the correct string in time, which will result in a Timeout::Error. In that case, the program will be rescued and player will be asked to type in again.
 
 ## Project Management
 
@@ -65,7 +52,6 @@ Here is a link to [my trello board](https://trello.com/b/HLiXNBXP/terminal-text-
 
 ## Diagram  
 ![flowchart](docs/flowchart.jpg)
-## Tests
-Two tests hardcoded in the test folder. One about the save method and the other about the list of saves method.
+
 
 

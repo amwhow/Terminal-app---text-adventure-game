@@ -50,8 +50,6 @@ I used Trello to manage the tasks for this project.
 
 Here is a link to [my trello board](https://trello.com/b/HLiXNBXP/terminal-text-adventure-game).
 
-## Diagram  
-![flowchart](docs/flowchart.jpg)
 
 
 
